@@ -16,7 +16,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
 
 # MARK: Constants
-webhookURL=""
+webhookURL="https://hooks.slack.com/services/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"
 
 #setup some folders
 script_dir=$(dirname ${0:A})

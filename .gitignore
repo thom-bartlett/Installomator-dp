@@ -13,3 +13,4 @@ scratch/
 #!Installomator-*.pkg
 checkLabelCurrent.sh
 utils/checkLabels.sh
+utils/checkLabels.sh
