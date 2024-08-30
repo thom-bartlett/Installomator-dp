@@ -39,6 +39,7 @@ anaconda
 anastasiysextensionmanager
 androidfiletransfer
 androidstudio
+ankerwork
 anydesk
 apachedirectorystudio
 apachenetbeans
@@ -104,7 +105,7 @@ bracketsio
 brave
 bravepkg
 brosix
-bruno
+browserstack
 bugdom
 burpsuitecommunityedition
 burpsuiteprofessional
@@ -123,6 +124,7 @@ camtasia2022
 camtasia2023
 camunda
 canva
+capcut
 carboncopycloner
 catoclient
 charles
@@ -168,6 +170,7 @@ cytoscape
 daisydisk
 dangerzone
 darktable
+dataloader
 daylite
 dbeaverce
 debookee
@@ -393,6 +396,7 @@ lifesize
 lightburn
 linear
 logioptions
+logitechghub
 logitechoptions
 logitechoptionsplus
 logitune
@@ -426,6 +430,7 @@ meetingbar
 mendeleyreferencemanager
 menumeters
 merlinproject
+microsoftadvertisingeditor
 microsoftautoupdate
 microsoftazuredatastudio
 microsoftazurestorageexplorer
@@ -508,6 +513,7 @@ netnewswire
 netspot
 networksharemounter
 nextcloud
+nextivaone
 nodejs
 nodejslts
 nomachine
@@ -631,12 +637,12 @@ rodeunify
 royaltsx
 rstudio
 rustdesk
-salesforcecli
 santa
 scaleft
 scenebuilder
 screamingfrogseospider
 screencloudplayer
+screenconnect
 screenflick
 scribus
 scrollreverser
@@ -647,6 +653,7 @@ sequelace
 sequelpro
 sfsymbols
 shield
+shift
 shotcut
 shottr
 sidekick
@@ -694,11 +701,13 @@ starface72x
 starface73x
 starfaceuccclient
 stats
+stay
 steelseriesengine
 strongdm
 strongsync
 subethaedit
 sublimemerge
+sublimetext
 sublimetext
 suitestudio
 superhuman
@@ -805,6 +814,7 @@ xink
 xmenu
 xmind
 xquartz
+xscope
 yed
 youleanloudnessmeter2
 yubicoauthenticator
