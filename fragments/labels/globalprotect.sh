@@ -8,3 +8,4 @@ globalprotect)
     blockProcesses="GlobalProtect"
     packageID="come.paloaltonetworks.globalprotect.pkg"
     ;;
+    

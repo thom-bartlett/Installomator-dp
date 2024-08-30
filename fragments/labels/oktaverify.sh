@@ -8,3 +8,4 @@ oktaverify)
     appNewVersion=$(curl -is "$downloadURL" | grep ocation: | grep -o "OktaVerify.*pkg" | cut -d "-" -f 2)
     expectedTeamID="B7F62B65BN"
     ;;
+    

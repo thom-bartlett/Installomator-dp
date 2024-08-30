@@ -25,7 +25,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 # also no actual installation will be performed
 # debug mode 1 will download to the directory the script is run in, but will not check the version
 # debug mode 2 will download to the temp directory, check for blocking processes, check the version, but will not install anything or remove the current version
-DEBUG=0
+DEBUG=1
 
 # notify behavior
 NOTIFY=success
@@ -3947,7 +3947,8 @@ globalprotect)
     expectedTeamID="PXPZ95SK77"
     blockProcesses="GlobalProtect"
     packageID="come.paloaltonetworks.globalprotect.pkg"
-    ;;glpiagent)
+    ;;
+    glpiagent)
     name="GLPI-agent"
     type="pkg"
     packageID="com.teclib.glpi-agent"
@@ -6480,7 +6481,8 @@ oktaverify)
     downloadURL="https://$oktaTenant/api/v1/artifacts/OKTA_VERIFY_MACOS/download?releaseChannel=GA"
     appNewVersion=$(curl -is "$downloadURL" | grep ocation: | grep -o "OktaVerify.*pkg" | cut -d "-" -f 2)
     expectedTeamID="B7F62B65BN"
-    ;;omnidisksweeper)
+    ;;
+    omnidisksweeper)
     name="OmniDiskSweeper"
     type="dmg"
     downloadURL=$(curl -fs "https://update.omnigroup.com/appcast/com.omnigroup.OmniDiskSweeper" | xpath '(//rss/channel/item/enclosure/@url)[1]' 2>/dev/null | head -1 | cut -d '"' -f 2)
