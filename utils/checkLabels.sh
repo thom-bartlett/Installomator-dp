@@ -16,6 +16,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
 
 # MARK: Constants
+webhookURL="https://hooks.slack.com/services/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"
 
 #setup some folders
 script_dir=$(dirname ${0:A})
@@ -323,3 +324,69 @@ else
 fi
 
 echo "Done!"
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Webhook Message (Microsoft Teams or Slack) (thanks, @robjschroeder! and @iDrewbs!)
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+function webHookMessage() {
+        
+    echo "Generating Slack Message …"
+    
+    webHookdata=$(cat <<EOF
+        {
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Installomator Test Complete",
+                        "emoji": true
+                    }
+                },
+                {
+                    "type": "section",
+                    "fields": [
+                        {
+                            "type": "mrkdwn",
+                            "text": "Warnings counted: $countWarning"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "Warning labels: ${warningLabels}"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "ERRORS counted: $countError"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "i386 : ${errorLabelsi386}"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "arm64: ${errorLabelsarm64}"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "No errors detected!"
+                        },
+                    ]
+                }
+            ]
+        }
+EOF
+)
+
+    # Send the message to Slack
+    echo "Send the message to Slack …"
+    echo "${webHookdata}"
+    
+    # Submit the data to Slack
+    /usr/bin/curl -sSX POST -H 'Content-type: application/json' --data "${webHookdata}" $webhookURL 2>&1
+    
+    webhookResult="$?"
+    echo "Slack Webhook Result: ${webhookResult}"
+}
+
+webHookMessage

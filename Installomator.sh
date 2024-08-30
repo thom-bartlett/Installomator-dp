@@ -25,7 +25,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 # also no actual installation will be performed
 # debug mode 1 will download to the directory the script is run in, but will not check the version
 # debug mode 2 will download to the temp directory, check for blocking processes, check the version, but will not install anything or remove the current version
-DEBUG=1
+DEBUG=0
 
 # notify behavior
 NOTIFY=success
@@ -337,7 +337,7 @@ if [[ $(/usr/bin/arch) == "arm64" ]]; then
     fi
 fi
 VERSION="10.6beta"
-VERSIONDATE="2024-08-29"
+VERSIONDATE="2024-08-30"
 
 # MARK: Functions
 
@@ -3917,7 +3917,7 @@ gitkraken)
 globalprotect)
     name="globalprotect"
     type="pkg"
-    appNewVersion=$(curl -fs https://pan-gp-client.s3.amazonaws.com/ | xpath '//ListBucketResult/Contents/Key[contains(., ".pkg")]' 2>/dev/null | sed -e 's/<Key>//g' -e 's/<\/Key>//g' | sort -V | tail -n 1 | sed 's/\/GlobalProtect\.pkg$//') && echo "$latest_version"
+    appNewVersion=$(curl -fs https://pan-gp-client.s3.amazonaws.com/ | xpath '//ListBucketResult/Contents[last()]/Key' 2>/dev/null | sed -n 's/.*<Key>\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)-.*/\1/p')
     rawURL=$(curl -fs https://pan-gp-client.s3.amazonaws.com/ | xpath '//ListBucketResult/Contents/Key[contains(., ".pkg")]' 2>/dev/null | sed -e 's/<Key>//g' -e 's/<\/Key>//g' | sort -V | tail -n 1)
     downloadURL="https://pan-gp-client.s3.amazonaws.com/${rawURL}"
     expectedTeamID="PXPZ95SK77"
@@ -3996,7 +3996,7 @@ googledrivefilestream)
     elif [[ $(arch) == "i386" ]]; then
        packageID="com.google.drivefs.x86_64"
     fi
-    appNewVersion=$(curl -s "https://community.chocolatey.org/packages/googledrive" | xmllint --html --xpath 'substring-after(string(//h1[@class="mb-0 text-center"]), "Google Drive")' - 2> /dev/null)
+    appNewVersion=$(curl https://support.google.com/a/answer/7577057 | grep "Windows and macOS" | head -1 | sed -n 's/.*Version \([0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/p')
     downloadURL="https://dl.google.com/drive-file-stream/GoogleDriveFileStream.dmg" # downloadURL="https://dl.google.com/drive-file-stream/GoogleDrive.dmg"
     blockingProcesses=( "Google Docs" "Google Drive" "Google Sheets" "Google Slides" )
     appName="Google Drive.app"
