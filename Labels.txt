@@ -263,6 +263,7 @@ gather
 gathertown
 gdevelop
 geneiousprime
+gephi
 gfxcardstatus
 gimp
 githubdesktop
@@ -756,7 +757,6 @@ ultimakercura
 umbrellaroamingclient
 uniconverter
 universaltypeclient
-universe
 unnaturalscrollwheels
 utm
 vagrant
