@@ -336,7 +336,7 @@ if [[ $(/usr/bin/arch) == "arm64" ]]; then
         rosetta2=no
     fi
 fi
-VERSION="10.6"
+VERSION="10.7beta"
 VERSIONDATE="2024-08-30"
 
 # MARK: Functions
@@ -1940,6 +1940,17 @@ androidstudio)
     expectedTeamID="EQHXZ8M8AV"
     blockingProcesses=( androidstudio )
     ;;
+ankerwork)
+    name="AnkerWork"
+    type="dmg"
+    if [[ $(arch) == i386 ]]; then
+        downloadURL="https://ankerwork.s3.us-west-2.amazonaws.com/electron/AnkerWork-Setup-arm64.dmg"
+    elif [[ $(arch) == arm64 ]]; then
+        downloadURL="https://ankerwork.s3.us-west-2.amazonaws.com/electron/AnkerWork-Setup-x64.dmg"
+    fi
+    appNewVersion=$(curl -fs https://us.ankerwork.com/pages/download-software | grep -i "*For Mac 10.14" | grep '<div class="version-num">' | sed 's/.*<div class="version-num">V\([0-9.]*\)<\/div>.*/\1/')
+    expectedTeamID="BVL93LPC7F"
+    ;;
 anydesk)
     name="AnyDesk"
     type="dmg"
@@ -2472,7 +2483,15 @@ brosix)
     appNewVersion=""
     expectedTeamID="TA6P23NW8H"
     ;;
-bruno)
+browserstack)
+    name="Browser Stack"
+    type="pkg"
+    downloadURL="https://www.browserstack.com/local-testing/downloads/native-app/BrowserStackLocal.pkg"
+    expectedTeamID="YQ5FZQ855D"
+    ;;
+
+
+    bruno)
     # https://github.com/usebruno/bruno; https://www.usebruno.com/
     name="Bruno"
     type="dmg"
@@ -2622,6 +2641,17 @@ canva)
         appNewVersion=$( curl -fsLI -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15" -H "accept-encoding: gzip, deflate, br" -H "Referrer Policy: strict-origin-when-cross-origin" -H "upgrade-insecure-requests: 1" -H "sec-fetch-dest: document" -H "sec-gpc: 1" -H "sec-fetch-user: ?1" -H "accept-language: en-US,en;q=0.9" -H "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" -H "sec-fetch-mode: navigate" "https://www.canva.com/download/mac/intel/canva-desktop/" | grep -i "^location" | cut -d " " -f2 | tr -d '\r' | sed -E 's/.*\/[a-zA-Z]*-([0-9.]*)-*.*\.dmg/\1/g' )
 
     expectedTeamID="5HD2ARTBFS"
+    ;;
+capcut)
+    name="CapCut"
+    appName="CapCut.app"
+    type="dmg"
+    downloadURL=$(curl -sL "https://www.capcut.com" | sed -n 's/.*href="\([^"]*\.exe\)".*Download for Windows.*/\1/p' | sed 's/\.exe/\.dmg/')
+    installerTool="CapCut-Downloader.app"
+    CLIInstaller="CapCut-Downloader.app/Contents/MacOS/CapCut-Downloader"
+    expectedTeamID="22MMUN2RN5"
+    CLIArguments=(--mode=silent)
+    appCustomVersion() { echo "$(defaults read /Applications/CapCut.app/Contents/Info.plist CFBundleShortVersionString)" }
     ;;
 carboncopycloner)
     name="Carbon Copy Cloner"
@@ -3020,6 +3050,13 @@ darktable)
     downloadURL=$(downloadURLFromGit darktable-org darktable)
     appNewVersion=$(versionFromGit darktable-org darktable)
     expectedTeamID="85Q3K4KQRY"
+    ;;
+dataloader)
+    name="Data Loader"
+    type="zip"
+    downloadURL="$(downloadURLFromGit forcedotcom dataloader)"
+    appNewVersion="$(versionFromGit forcedotcom dataloader)"
+    expectedTeamID="PWA5E9TQ59"
     ;;
 daylite)
     name="Daylite"
@@ -5121,6 +5158,16 @@ linear)
     blockingProcesses=( "Linear" )
     ;;
     
+logitechghub)
+    name="Logi G-Hub"
+    downloadURL="https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.zip"
+    type=zip
+    archiveName="lghub_installer.zip"
+    appName="lghub_installer.app"
+    CLIInstaller="lghub_installer.app/Contents/MacOS/lghub_installer"
+    CLIArguments=(--quiet)
+    expectedTeamID="QED4VVPZWA"
+    ;;
 logioptions|\
 logitechoptions)
     name="Logi Options"
@@ -5499,6 +5546,12 @@ merlinproject)
     downloadURL="https://www.projectwizards.net/downloads/MerlinProject.zip"
     appNewVersion="$(curl -fs "https://www.projectwizards.net/de/support/release-notes"  | grep Version | head -n 6 | tail -n 1 | sed 's/[^0-9.]*//g')"
     expectedTeamID="9R6P9VZV27"
+    ;;
+microsoftadvertisingeditor)
+    name="Microsoft Advertising Editor"
+    type="dmg"
+    downloadURL="https://aka.ms/baemacproddownload"
+    expectedTeamID="UBF8T346G9"
     ;;
 microsoftautoupdate)
     name="Microsoft AutoUpdate"
@@ -6306,6 +6359,12 @@ nextcloud)
     # Also it does not math packageID version "3.1.34850"
     appCustomVersion(){defaults read /Applications/nextcloud.app/Contents/Info.plist CFBundleShortVersionString | sed -E 's/^([0-9.]*)git.*/\1/g'}
     expectedTeamID="NKUJUXUJ3B"
+    ;;
+nextivaone)
+    name="Nextiva"
+    type="dmg"
+    downloadURL="https://assets.nextiva.com/download/Nextiva-mac.dmg?_ics=1717509178791&irclickid=~d~6W131ZQWSXYRIPNOW2SJKJGypqwpvsjdc9~01WVUROFEuolc-2"
+    expectedTeamID="H8VH5JVTB6"
     ;;
 nodejs)
     name="nodejs"
@@ -7294,19 +7353,6 @@ rustdesk)
     archiveName="rustesk-$appNewVersion.dmg"
     expectedTeamID="HZF9JMC8YN"
     ;;
-salesforcecli)
-    name="Salesforce CLI"
-    type="pkg"
-    packageID="com.salesforce.cli"
-    if [[ $(arch) == "arm64" ]]; then
-    downloadURL="https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-arm64.pkg"
-    elif [[ $(arch) == "i386" ]]; then
-    downloadURL="https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-x64.pkg"
-    fi
-    appNewVersion=$( curl -fsL https://raw.githubusercontent.com/forcedotcom/cli/main/releasenotes/README.md | grep -iF  "[stable]"  | grep -i "[##]" | awk '{print $2}' | sed -E 's/.*\/[a-zA-Z]*-([0-9.]*)\..*/\1/g'  )
-    expectedTeamID="62J96EUJ9N"
-    blockingProcesses=( NONE )
-    ;;
 santa)
     # credit: Tadayuki Onishi (@kenchan0130)
     name="Santa"
@@ -7369,6 +7415,13 @@ screencloudplayer)
     downloadURL=$(curl -fs "https://screencloud.com/download" | sed -n 's/^.*"url":"\(https.*\.dmg\)".*$/\1/p')
     appNewVersion=$( echo $downloadURL | sed -e 's/.*\/ScreenCloud.*\-\([0-9.]*\)\.dmg/\1/g' )
     expectedTeamID="3C4F953K6P"
+    ;;
+screenconnect)
+    name="Screens Connect"
+    type="zip"
+    downloadURL=$(curl -fs https://updates.edovia.com/com.edovia.screens.connect.mac/appcast.xml | xpath '//rss/channel/item[1]/enclosure/@url' | cut -d '"' -f 2)
+    appNewVersion=$(curl -fs https://updates.edovia.com/com.edovia.screens.connect.mac/appcast.xml | xpath '//rss/channel/item[1]/enclosure/@sparkle:shortVersionString' 2>/dev/null | cut -d '"' -f 2)
+    expectedTeamID="F69M46B76S"
     ;;
 screenflick)
     # credit: Gabe Marchan (gabemarchan.com - @darklink87)
@@ -7438,6 +7491,18 @@ shield)
     downloadURL=$(downloadURLFromGit theevilbit Shield)
     appNewVersion=$(versionFromGit theevilbit Shield)
     expectedTeamID="33YRLYRBYV"
+    ;;
+shift)
+    name="Shift"
+    type="dmg"
+    if [[ $(arch) == "arm64" ]]; then
+        URL=$(curl -fs https://shift.com/download/ | grep 'https://updates.tryshift.com/' | sed -n 's/.*\(https:\/\/updates.tryshift.com\/[^"]*stable-x64\.dmg\).*/\1/p')
+        downloadURL=$(echo "$URL" | sed 's/x64/arm64/')
+    elif [[ $(arch) == "i386" ]]; then
+        downloadURL=$(curl -fs https://shift.com/download/ | grep 'https://updates.tryshift.com/' | sed -n 's/.*\(https:\/\/updates.tryshift.com\/[^"]*stable-x64\.dmg\).*/\1/p')
+    fi
+    appNewVersion=$(echo "$downloadURL" | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+' | sed 's/v//')
+    expectedTeamID="TYR24A9JU5"
     ;;
 shotcut)
     name="shotcut"
@@ -7805,6 +7870,13 @@ stats)
     appNewVersion="$(versionFromGit exelban stats)"
     expectedTeamID="RP2S87B72W"
     ;;
+stay)
+    name="Stay"
+    type="dmg"
+    downloadURL=$(curl -s "https://cordlessdog.com/stay/" | grep -o '/stay/versions/Stay%20[0-9]\+\.[0-9]\+\.dmg' | sort -V | tail -n 1 | sed 's|^|https://cordlessdog.com|')
+    appNewVersion=$(echo "$downloadURL" | grep -o 'Stay%20[0-9]\+\.[0-9]\+' | sed 's/Stay%20//')
+    expectedTeamID="N87J278237"
+    ;;
 steelseriesengine)
     name="SteelSeries GG"
     type="pkg"
@@ -7846,6 +7918,14 @@ sublimemerge)
     type="zip"
     downloadURL="$(curl -fs "https://www.sublimemerge.com/download_thanks?target=mac#direct-downloads" | grep -io "https://download.*_mac.zip" | head -1)"
     appNewVersion=$(curl -fs https://www.sublimemerge.com/download | grep -i -A 4 "id.*changelog" | grep -io "Build [0-9]*")
+    expectedTeamID="Z6D26JE4Y4"
+    ;;
+sublimetext)
+    # credit: Søren Theilgaard (@theilgaard)
+    name="Sublime Text"
+    type="zip"
+    downloadURL="$(curl -fs "https://www.sublimetext.com/download_thanks?target=mac#direct-downloads" | grep -io "https://download.*_mac.zip" | head -1)"
+    appNewVersion=$(curl -fs https://www.sublimetext.com/download | grep -i -A 4 "id.*changelog" | grep -io "Build [0-9]*")
     expectedTeamID="Z6D26JE4Y4"
     ;;
 sublimetext)
@@ -8725,6 +8805,13 @@ xquartz)
     downloadURL=$(downloadURLFromGit XQuartz XQuartz)
     appNewVersion=$(versionFromGit XQuartz XQuartz)
     expectedTeamID="NA574AWV7E"
+    ;;
+xscope)
+    name="Xscope"
+    type="zip"
+    downloadURL=$(curl -fLs xscopeapp.com | grep "https://downloads.iconfactory.com/xscope" | awk -F 'href="' '{print $2}' | awk -F '"' '{print $1}')
+    appNewVersion=$(curl -fLs xscopeapp.com | grep "https://downloads.iconfactory.com/xscope" | awk -F 'xScope-' '{print $2}' | awk -F '+' '{print $1}')
+    expectedTeamID="RYQWBTQRPT  "
     ;;
 yed)
     # This label assumes accept of these T&C’s: https://www.yworks.com/resources/yed/license.html
