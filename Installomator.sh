@@ -2050,7 +2050,7 @@ arcbrowser)
 name="Arc"
 type="dmg"
 downloadURL="https://releases.arc.net/release/Arc-latest.dmg"
-appNewVersion="$(curl -fsIL https://releases.arc.net/release/Arc-latest.dmg | grep -i ^location | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+-[0-9]+).*/\1/')"
+appNewVersion="$(curl -fsIL https://releases.arc.net/release/Arc-latest.dmg | grep -i ^location | tail -n 1 |sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]).*/\1/')"
 expectedTeamID="S6N382Y83G"
     ;;
 archimate)
@@ -3201,17 +3201,21 @@ displaylinkmanagergraphicsconnectivity)
 docker)
     name="Docker"
     type="dmg"
-    if [[ $(arch) == arm64 ]]; then
-     downloadURL="https://desktop.docker.com/mac/stable/arm64/Docker.dmg"
-     appNewVersion=$( curl -fs "https://desktop.docker.com/mac/main/arm64/appcast.xml" | xpath '(//rss/channel/item/enclosure/@sparkle:shortVersionString)[last()]' 2>/dev/null | cut -d '"' -f2 )
-    elif [[ $(arch) == i386 ]]; then
-     downloadURL="https://desktop.docker.com/mac/stable/amd64/Docker.dmg"
-     appNewVersion=$( curl -fs "https://desktop.docker.com/mac/main/amd64/appcast.xml" | xpath '(//rss/channel/item/enclosure/@sparkle:shortVersionString)[last()]' 2>/dev/null | cut -d '"' -f2 )
+    if [[ "$(arch)" == arm64 ]]; then
+        downloadURL=$( curl -fs "https://desktop.docker.com/mac/main/arm64/appcast.xml" | xpath '(//rss/channel/item/enclosure/@url)[last()]' 2>/dev/null | cut -d '"' -f2 )
+        appNewVersion=$( curl -fs "https://desktop.docker.com/mac/main/arm64/appcast.xml" | xpath '(//rss/channel/item/enclosure/@sparkle:shortVersionString)[last()]' 2>/dev/null | cut -d '"' -f2 )
+    elif [[ "$(arch)" == i386 ]]; then
+        downloadURL=$( curl -fs "https://desktop.docker.com/mac/main/amd64/appcast.xml" | xpath '(//rss/channel/item/enclosure/@url)[last()]' 2>/dev/null | cut -d '"' -f2 )
+        appNewVersion=$( curl -fs "https://desktop.docker.com/mac/main/amd64/appcast.xml" | xpath '(//rss/channel/item/enclosure/@sparkle:shortVersionString)[last()]' 2>/dev/null | cut -d '"' -f2 )
+    fi
+    CLIInstaller="Docker.app/Contents/MacOS/install"
+    CLIArguments=(--accept-license)
+    if [[ "${currentUser}" != "loginwindow" ]];then
+        CLIArguments+=(--user "${currentUser}")
     fi
     expectedTeamID="9BNSXJN65R"
-    blockingProcesses=( "Docker Desktop" "Docker" )
-    ;;
-dockutil)
+    blockingProcesses=( "Docker Desktop" )
+    ;;dockutil)
     name="dockutil"
     type="pkg"
     packageID="dockutil.cli.tool"
@@ -3971,6 +3975,16 @@ gitkraken)
     expectedTeamID="T7QVVUTZQ8"
     blockingProcesses=( "GitKraken" )
     ;;
+globalprotect)
+    name="globalprotect"
+    type="pkg"
+    appNewVersion=$(curl -fs https://pan-gp-client.s3.amazonaws.com/ | xpath '//ListBucketResult/Contents/Key[contains(., ".pkg")]' 2>/dev/null | sed -e 's/<Key>//g' -e 's/<\/Key>//g' | sort -V | tail -n 1 | sed 's/\/GlobalProtect\.pkg$//')
+    rawURL=$(curl -fs https://pan-gp-client.s3.amazonaws.com/ | xpath '//ListBucketResult/Contents/Key[contains(., ".pkg")]' 2>/dev/null | sed -e 's/<Key>//g' -e 's/<\/Key>//g' | sort -V | tail -n 1)
+    downloadURL="https://pan-gp-client.s3.amazonaws.com/${rawURL}"
+    expectedTeamID="PXPZ95SK77"
+    blockProcesses="GlobalProtect"
+    packageID="come.paloaltonetworks.globalprotect.pkg"
+    ;;
 glpiagent)
     name="GLPI-agent"
     type="pkg"
@@ -4044,7 +4058,7 @@ googledrivefilestream)
     elif [[ $(arch) == "i386" ]]; then
        packageID="com.google.drivefs.x86_64"
     fi
-    appNewVersion=$(curl -s "https://community.chocolatey.org/packages/googledrive" | xmllint --html --xpath 'substring-after(string(//h1[@class="mb-0 text-center"]), "Google Drive")' - 2> /dev/null)
+    appNewVersion=$(curl https://support.google.com/a/answer/7577057 | grep "Windows and macOS" | head -1 | sed -n 's/.*Version \([0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/p')
     downloadURL="https://dl.google.com/drive-file-stream/GoogleDriveFileStream.dmg" # downloadURL="https://dl.google.com/drive-file-stream/GoogleDrive.dmg"
     blockingProcesses=( "Google Docs" "Google Drive" "Google Sheets" "Google Slides" )
     appName="Google Drive.app"
@@ -5630,7 +5644,7 @@ microsoftexcel)
     type="pkg"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=525135"
     #appNewVersion=$(curl -fs https://macadmins.software/latest.xml | xpath '//latest/package[id="com.microsoft.excel.standalone.365"]/cfbundleshortversionstring' 2>/dev/null | sed -E 's/<cfbundleshortversionstring>([0-9.]*)<.*/\1/')
-    appNewVersion=$(curl -fsIL "$downloadURL" | grep -i location: | grep -o "/Microsoft_.*pkg" | cut -d "_" -f 3 | cut -d "." -f 1-2)
+    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i location: | grep -o "/Microsoft_.*pkg" | sed -r 's/(.*)\.pkg/\1/g' | sed 's/[^0-9\.]//g')
     expectedTeamID="UBF8T346G9"
     if [[ -x "/Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app/Contents/MacOS/msupdate" && $INSTALL != "force" && $DEBUG -eq 0 ]]; then
         printlog "Running msupdate --list"
@@ -5764,7 +5778,7 @@ microsoftonedrive)
     type="pkg"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=823060"
     #appNewVersion=$(curl -fs https://macadmins.software/latest.xml | xpath '//latest/package[id="com.microsoft.onedrive.standalone"]/cfbundleshortversionstring' 2>/dev/null | sed -E 's/<cfbundleshortversionstring>([0-9.]*)<.*/\1/')
-    appNewVersion=$(curl -fsIL "$downloadURL" | grep -i location: | cut -d "/" -f 6 | cut -d "." -f 1-3)
+    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i location: | grep -o "/Installers/.*pkg" | sed -r 's/(.*)\.pkg/\1/g' | sed 's/[^0-9\.]//g')
     expectedTeamID="UBF8T346G9"
     if [[ -x "/Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app/Contents/MacOS/msupdate" && $INSTALL != "force" && $DEBUG -eq 0 ]]; then
         printlog "Running msupdate --list"
@@ -5785,7 +5799,7 @@ microsoftonenote)
     type="pkg"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=820886"
     #appNewVersion=$(curl -fs https://macadmins.software/latest.xml | xpath '//latest/package[id="com.microsoft.onenote.standalone.365"]/cfbundleshortversionstring' 2>/dev/null | sed -E 's/<cfbundleshortversionstring>([0-9.]*)<.*/\1/')
-    appNewVersion=$(curl -fsIL "$downloadURL" | grep -i location: | grep -o "/Microsoft_.*pkg" | cut -d "_" -f 3 | cut -d "." -f 1-2)
+    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i location: | grep -o "/Microsoft_.*pkg" | sed -r 's/(.*)\.pkg/\1/g' | sed 's/[^0-9\.]//g')
     expectedTeamID="UBF8T346G9"
     if [[ -x "/Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app/Contents/MacOS/msupdate" && $INSTALL != "force" && $DEBUG -eq 0 ]]; then
         printlog "Running msupdate --list"
@@ -5822,7 +5836,7 @@ microsoftoutlook)
     type="pkg"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=525137"
     #appNewVersion=$(curl -fs https://macadmins.software/latest.xml | xpath '//latest/package[id="com.microsoft.outlook.standalone.365"]/cfbundleshortversionstring' 2>/dev/null | sed -E 's/<cfbundleshortversionstring>([0-9.]*)<.*/\1/')
-    appNewVersion=$(curl -fsIL "$downloadURL" | grep -i location: | grep -o "/Microsoft_.*pkg" | cut -d "_" -f 3 | cut -d "." -f 1-2)
+    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i location: | grep -o "/Microsoft_.*pkg" | sed -r 's/(.*)\.pkg/\1/g' | sed 's/[^0-9\.]//g')
     expectedTeamID="UBF8T346G9"
     if [[ -x "/Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app/Contents/MacOS/msupdate" && $INSTALL != "force" && $DEBUG -eq 0 ]]; then
         printlog "Running msupdate --list"
@@ -5850,7 +5864,7 @@ microsoftpowerpoint)
     type="pkg"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=525136"
     #appNewVersion=$(curl -fs https://macadmins.software/latest.xml | xpath '//latest/package[id="com.microsoft.powerpoint.standalone.365"]/cfbundleshortversionstring' 2>/dev/null | sed -E 's/<cfbundleshortversionstring>([0-9.]*)<.*/\1/')
-    appNewVersion=$(curl -fsIL "$downloadURL" | grep -i location: | grep -o "/Microsoft_.*pkg" | cut -d "_" -f 3 | cut -d "." -f 1-2)
+    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i location: | grep -o "/Microsoft_.*pkg" | sed -r 's/(.*)\.pkg/\1/g' | sed 's/[^0-9\.]//g')
     expectedTeamID="UBF8T346G9"
     if [[ -x "/Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app/Contents/MacOS/msupdate" && $INSTALL != "force" && $DEBUG -eq 0 ]]; then
         printlog "Running msupdate --list"
@@ -5933,7 +5947,7 @@ microsoftteams)
     type="pkg"
     #packageID="com.microsoft.teams"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=869428"
-    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i "^location" | tail -1 | cut -d "/" -f5)
+    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i location: | grep -o "/production-osx/.*pkg" | sed -r 's/(.*)\.pkg/\1/g' | sed 's/[^0-9\.]//g')
     versionKey="CFBundleGetInfoString"
     expectedTeamID="UBF8T346G9"
     blockingProcesses=( Teams "Microsoft Teams classic Helper" )
@@ -5986,7 +6000,7 @@ microsoftword)
     type="pkg"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=525134"
     #appNewVersion=$(curl -fs https://macadmins.software/latest.xml | xpath '//latest/package[id="com.microsoft.word.standalone.365"]/cfbundleshortversionstring' 2>/dev/null | sed -E 's/<cfbundleshortversionstring>([0-9.]*)<.*/\1/')
-    appNewVersion=$(curl -fsIL "$downloadURL" | grep -i location: | grep -o "/Microsoft_.*pkg" | cut -d "_" -f 3 | cut -d "." -f 1-2)
+    appNewVersion=$(curl -fsIL "${downloadURL}" | grep -i location: | grep -o "/Microsoft_.*pkg" | sed -r 's/(.*)\.pkg/\1/g' | sed 's/[^0-9\.]//g')
     expectedTeamID="UBF8T346G9"
     if [[ -x "/Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app/Contents/MacOS/msupdate" && $INSTALL != "force" ]]; then
         printlog "Running msupdate --list"
@@ -6517,7 +6531,17 @@ odrive)
     downloadURL="https://www.odrive.com/downloaddesktop?platform=mac"
     expectedTeamID="N887K88VYZ"
     ;;
-omnidisksweeper)
+oktaverify)
+    name="Okta Verify"
+    type="pkg"
+    if [[ -z $oktaTenant ]]; then
+         oktaTenant=okta.okta.com
+    fi
+    downloadURL="https://$oktaTenant/api/v1/artifacts/OKTA_VERIFY_MACOS/download?releaseChannel=GA"
+    appNewVersion=$(curl -is "$downloadURL" | grep ocation: | grep -o "OktaVerify.*pkg" | cut -d "-" -f 2)
+    expectedTeamID="B7F62B65BN"
+    ;;
+    omnidisksweeper)
     name="OmniDiskSweeper"
     type="dmg"
     downloadURL=$(curl -fs "https://update.omnigroup.com/appcast/com.omnigroup.OmniDiskSweeper" | xpath '(//rss/channel/item/enclosure/@url)[1]' 2>/dev/null | head -1 | cut -d '"' -f 2)

@@ -189,7 +189,6 @@ diskspace
 displaylinkmanager
 displaylinkmanagergraphicsconnectivity
 docker
-dockutil
 dragonframe5
 drawio
 drift
@@ -272,6 +271,7 @@ gfxcardstatus
 gimp
 githubdesktop
 gitkraken
+globalprotect
 glpiagent
 golang
 googleadseditor
@@ -533,7 +533,7 @@ obs
 obsbotwebcam
 obsidian
 odrive
-omnidisksweeper
+oktaverify
 omnifocus3
 omnifocus4
 omnigraffle6
