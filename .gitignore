@@ -1,3 +1,4 @@
+utils/checkLabels.sh
 .DS_Store
 build/
 SamplePkgs/
@@ -11,6 +12,4 @@ scratch/
 
 # do include Installomator .pkg files
 #!Installomator-*.pkg
-checkLabelCurrent.sh
-utils/checkLabels.sh
-utils/checkLabels.sh
+
