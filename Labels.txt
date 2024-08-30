@@ -269,6 +269,7 @@ gimp
 githubdesktop
 gitkraken
 globalprotect
+glpiagent
 golang
 googleadseditor
 googlechrome
