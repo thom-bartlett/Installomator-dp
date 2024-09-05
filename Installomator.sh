@@ -337,7 +337,7 @@ if [[ $(/usr/bin/arch) == "arm64" ]]; then
     fi
 fi
 VERSION="10.7beta"
-VERSIONDATE="2024-08-30"
+VERSIONDATE="2024-09-05"
 
 # MARK: Functions
 
@@ -6347,6 +6347,27 @@ netnewswire)
     appNewVersion=$(curl -fs https://ranchero.com/downloads/netnewswire-release.xml | xpath '//rss/channel/item[1]/enclosure/@sparkle:shortVersionString' 2>/dev/null | cut -d '"' -f 2)
     expectedTeamID="M8L2WTLA8W"
     ;;
+netskope)
+    name="Netskope Client"
+    type="pkg"
+    downloadURL="https://download-dailypay.goskope.com/dlr/mac/get"
+    # if [[ -n $customURL ]]; then
+    #     downloadURL="https://download-dailypay.goskope.com/dlr/mac/get"
+    # else
+    #     localPKG=$(find "/Library/Application Support/JAMF/Waiting Room/" -iname "NSClient*.pkg" | head -n1)
+    #     if [[ -f $localPKG ]]; then
+    #     downloadURL="file://${localPKG// /%20}"
+    #     fi
+    # fi
+    expectedTeamID="24W52P9M7W"
+    Company="Netskope"
+    if [[ -z $downloadURL ]]; then
+        printlog "downloadURL variable not set" ERROR
+        printlog "################## End $APPLICATION \n\n" INFO
+        exit 99
+    fi
+    NOTIFY=silent
+    ;;
 netspot)
     name="NetSpot"
     type="dmg"
@@ -6513,6 +6534,17 @@ obsbotwebcam)
     downloadURL=$(curl -fsL "https://www.obsbot.com/download/obsbot-tiny-series" | xmllint --html --xpath 'string(//a[contains(@href,"WebCam_OA_E_MacOS")]/@href)' - 2> /dev/null)
     appNewVersion=$(curl -fsL "https://www.obsbot.com/download/obsbot-tiny-series" | xmllint --html --xpath 'substring-after(substring-before(string(//a[contains(@href,"WebCam_OA_E_MacOS")]/@href),"_release"),"MacOS_")' - 2> /dev/null)
     expectedTeamID="7GJANK3822"
+    ;;
+observeai)
+    name="Observe.AI Screen Recorder"
+    type="pkg"
+    if [[ $(arch) == "arm64" ]]; then
+        downloadURL=$(getJSONValue "$(curl -fsL https://kong.observe.ai/v1/screen-recording/app-versions/latest-mac)" "arm64_pkg_download_url" )
+    elif [[ $(arch) == "i386" ]]; then
+        downloadURL=$(getJSONValue "$(curl -fsL https://kong.observe.ai/v1/screen-recording/app-versions/latest-mac)" "x64_pkg_download_url" )
+    fi
+    appNewVersion=$(getJSONValue "$(curl -fsL https://kong.observe.ai/v1/screen-recording/app-versions/latest-mac)" "app_version_number" | cut -c2- )
+    expectedTeamID="377DKSV63J"
     ;;
 obsidian)
     # credit: Søren Theilgaard (@theilgaard)

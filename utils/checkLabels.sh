@@ -166,7 +166,7 @@ if [[ $# -eq 0 ]]; then
     allLabels=( $(grep -h -E '^([a-z0-9\_-]*)(\)|\|\\)$' ${labels_dir}/*.sh | tr -d ')|\\' | sort) )
     archLabels=( $(grep "\$(arch)" ${labels_dir}/* | awk '{print $1}' | sed -E 's/.*\/([a-z0-9\_-]*)\..*/\1/g'| uniq ) )
 else
-    allLabels=( "${allLabels[@]:2}" )
+    allLabels=( ${=@} )
     # Check if labels exist
     for checkLabel in $allLabels; do
         if [ ! $(ls ${labels_dir}/${checkLabel}.sh 2>/dev/null) ] ; then
@@ -253,7 +253,7 @@ for fixedArch in i386 arm64; do
                             if [[ "${URLlocation}" != "" ]]; then
                                 URLextension=$( echo "${URLlocation}" | tail -1 | sed -E 's/.*\.([a-zA-Z]*)\s*/\1/g' | tr -d '\r\n' )
                             else
-                                URLextension=$( echo "${URLfilename}" | tail -1 | sed -E 's/.*\.([a-zA-Z]*)\s*/\1/g' | tr -d '\r\n' )
+                                URLextension=$( echo "${URLfilename}" | tail -1 | sed -E 's/.*filename[^;]*[^.]*\.([a-zA-Z0-9]+)["\'']?.*/\1/' | tr -d '\r\n' )
                             fi
                             URLextension=${${URLextension:l}%%\?*}
                             if [[ "${URLextension}" == "${expectedExtension}" ]]; then

@@ -510,6 +510,7 @@ nanosaur
 nessusagent
 netiquette
 netnewswire
+netskope
 netspot
 networksharemounter
 nextcloud
@@ -531,6 +532,7 @@ nvivo14
 nweasecuretestingbrowser
 obs
 obsbotwebcam
+observeai
 obsidian
 odrive
 oktaverify
