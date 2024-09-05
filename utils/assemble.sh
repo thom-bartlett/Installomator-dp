@@ -167,7 +167,6 @@ if [[ buildPkg -eq 1 ]]; then
     productbuild --package "${pkgpath}" \
                  --version "${version}" \
                  --identifier "${identifier}" \
-                 --sign "${signature}" \
                  "${productpath}"
 
     # clean up project folder
