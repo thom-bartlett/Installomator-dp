@@ -21,4 +21,7 @@ adobecreativeclouddesktop)
     expectedTeamID="JQ525L2MZD"
     blockingProcesses=( "Creative Cloud" )
     Company="Adobe"
+    appCustomVersion(){
+        defaults read /Applications/Utilities/Adobe\ Creative\ Cloud/Utils/Creative\ Cloud\ Desktop\ App.app/Contents/Info.plist CFBundleShortVersionString
+    }
     ;;

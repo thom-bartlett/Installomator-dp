@@ -471,7 +471,6 @@ microsoftteamsclassic
 microsoftteamsnew
 microsoftteamsreset
 microsoftvisualstudiocode
-microsoftword
 microsoftwordreset
 mightymike
 mindmanager

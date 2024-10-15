@@ -337,7 +337,7 @@ if [[ $(/usr/bin/arch) == "arm64" ]]; then
     fi
 fi
 VERSION="10.7beta"
-VERSIONDATE="2024-09-26"
+VERSIONDATE="2024-10-08"
 
 # MARK: Functions
 
@@ -1650,6 +1650,9 @@ adobecreativeclouddesktop)
     expectedTeamID="JQ525L2MZD"
     blockingProcesses=( "Creative Cloud" )
     Company="Adobe"
+    appCustomVersion(){
+        defaults read /Applications/Utilities/Adobe\ Creative\ Cloud/Utils/Creative\ Cloud\ Desktop\ App.app/Contents/Info.plist CFBundleShortVersionString
+    }
     ;;
 adobedigitaleditions)
     name="Adobe Digital Editions"
@@ -3589,7 +3592,8 @@ figma)
     elif [[ $(arch) == "i386" ]]; then
         downloadURL="https://desktop.figma.com/mac/Figma.zip"
     fi
-    appNewVersion="$(getJSONValue "$(curl -fs https://desktop.figma.com/mac/RELEASE.json)" "version")"
+    # likely not in use anymore
+    #appNewVersion="$(getJSONValue "$(curl -fs https://desktop.figma.com/mac/RELEASE.json)" "version")"
     expectedTeamID="T8RA8NE3B7"
     ;;
 filemakerpro)
@@ -5990,12 +5994,12 @@ visualstudiocode)
     name="Visual Studio Code"
     type="zip"
     downloadURL="https://go.microsoft.com/fwlink/?LinkID=2156837" # Universal
-    appNewVersion=$(curl -fsL "https://code.visualstudio.com/Updates" | grep "/darwin" | grep -oiE ".com/([^>]+)([^<]+)/darwin" | cut -d "/" -f 2 | sed $'s/[^[:print:]	]//g' | head -1 )
+	curlOptions=( -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15" )
+    appNewVersion=$(curl -fsL $curlOptions "https://code.visualstudio.com/Updates" | grep "/darwin" | grep -oiE ".com/([^>]+)([^<]+)/darwin" | cut -d "/" -f 2 | sed $'s/[^[:print:]	]//g' | head -1 )
     expectedTeamID="UBF8T346G9"
     appName="Visual Studio Code.app"
     blockingProcesses=( Code )
-    ;;
-microsoftword)
+    ;;microsoftword)
     name="Microsoft Word"
     type="pkg"
     downloadURL="https://go.microsoft.com/fwlink/?linkid=525134"
@@ -9521,6 +9525,11 @@ updateDialog "wait" "Finishing..."
 
 # MARK: Finishing — print installed application location and version
 finishing
+
+# hopefully temporary fix for reopening problems
+if [[ $label = "adobecreativeclouddesktop" ]]; then
+    appName="Creative Cloud.app"
+fi
 
 # all done!
 cleanupAndExit 0 "All done!" REQ

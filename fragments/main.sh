@@ -376,5 +376,10 @@ updateDialog "wait" "Finishing..."
 # MARK: Finishing — print installed application location and version
 finishing
 
+# hopefully temporary fix for reopening problems
+if [[ $label = "adobecreativeclouddesktop" ]]; then
+    appName="Creative Cloud.app"
+fi
+
 # all done!
 cleanupAndExit 0 "All done!" REQ

@@ -6,6 +6,7 @@ figma)
     elif [[ $(arch) == "i386" ]]; then
         downloadURL="https://desktop.figma.com/mac/Figma.zip"
     fi
-    appNewVersion="$(getJSONValue "$(curl -fs https://desktop.figma.com/mac/RELEASE.json)" "version")"
+    # likely not in use anymore
+    #appNewVersion="$(getJSONValue "$(curl -fs https://desktop.figma.com/mac/RELEASE.json)" "version")"
     expectedTeamID="T8RA8NE3B7"
     ;;
