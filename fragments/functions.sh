@@ -50,7 +50,11 @@ reloadAsUser() {
 displaydialog() { # $1: message $2: title
     message=${1:-"Message"}
     title=${2:-"Installomator"}
-    runAsUser osascript -e "button returned of (display dialog \"$message\" with  title \"$title\" buttons {\"Not Now\", \"Quit and Update\"} default button \"Quit and Update\" with icon POSIX file \"$LOGO\" giving up after $PROMPT_TIMEOUT)"
+    swiftdialog="/usr/local/bin/dialog"
+    if [[ "$($swiftdialog --version | cut -d "." -f1)" -ge 2 && "$NOTIFY_DIALOG" -eq 1 ]]; then
+        "$swiftdialog" --small --icon "/Library/Application Support/DailyPay/DailyPay Logos/DailyPay_Logo_03.png" -o --messagefont size=18 --timer 300 --title "$title" --message "$message" --button1text "Quit and Update" --button2text "Not Now"
+    fi
+    #runAsUser osascript -e "button returned of (display dialog \"$message\" with  title \"$title\" buttons {\"Not Now\", \"Quit and Update\"} default button \"Quit and Update\" with icon POSIX file \"$LOGO\" giving up after $PROMPT_TIMEOUT)"
 }
 
 displaydialogContinue() { # $1: message $2: title
@@ -345,7 +349,7 @@ checkRunningProcesses() {
                       sleep 5
                       ;;
                     prompt_user|prompt_user_then_kill)
-                      button=$(displaydialog "Quit “$x” to continue updating? $([[ -n $appNewVersion ]] && echo "Version $appversion is installed, but version $appNewVersion is available.") (Leave this dialogue if you want to activate this update later)." "The application “$x” needs to be updated.")
+                      displaydialog "Quit “$x” to continue updating? $([[ -n $appNewVersion ]] && echo "Version $appversion is installed, but version $appNewVersion is available.") (You can also run this from Self Service at any time).\n\nIf no action is taken the app will be closed automatically." "$x needs to be updated."
                       if [[ $button = "Not Now" ]]; then
                         appClosed=0
                         cleanupAndExit 10 "user aborted update" ERROR
