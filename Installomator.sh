@@ -25,7 +25,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 # also no actual installation will be performed
 # debug mode 1 will download to the directory the script is run in, but will not check the version
 # debug mode 2 will download to the temp directory, check for blocking processes, check the version, but will not install anything or remove the current version
-DEBUG=1
+DEBUG=0
 
 # notify behavior
 NOTIFY=success
@@ -169,7 +169,7 @@ DIALOG_LIST_ITEM_NAME=""
 # listitem.
 # When the variable is unset, progress will be sent to Swift Dialog's main progress bar.
 
-NOTIFY_DIALOG=0
+NOTIFY_DIALOG=1
 # If this variable is set to 1, then we will check for installed Swift Dialog v. 2 or later, and use that for notification
 
 
@@ -393,7 +393,7 @@ displaydialog() { # $1: message $2: title
     title=${2:-"Installomator"}
     swiftdialog="/usr/local/bin/dialog"
     if [[ "$($swiftdialog --version | cut -d "." -f1)" -ge 2 && "$NOTIFY_DIALOG" -eq 1 ]]; then
-        "$swiftdialog" --small --icon "/Library/Application Support/DailyPay/DailyPay Logos/DailyPay_Logo_03.png" --timer 300 --title "$title" --message "$message" --button1text "Quit and Update" --button2text "Not Now"
+        "$swiftdialog" --small --icon "/Library/Application Support/DailyPay/DailyPay Logos/DailyPay_Logo_03.png" -o --messagefont size=18 --timer 300 --title "$title" --message "$message" --button1text "Quit and Update" --button2text "Not Now"
     fi
     #runAsUser osascript -e "button returned of (display dialog \"$message\" with  title \"$title\" buttons {\"Not Now\", \"Quit and Update\"} default button \"Quit and Update\" with icon POSIX file \"$LOGO\" giving up after $PROMPT_TIMEOUT)"
 }
@@ -690,14 +690,11 @@ checkRunningProcesses() {
                       sleep 5
                       ;;
                     prompt_user|prompt_user_then_kill)
-                      displaydialog "Quit “$x” to continue updating? $([[ -n $appNewVersion ]] && echo "Version $appversion is installed, but version $appNewVersion is available.") (You can also run this from Self Service at any time)." "$x needs to be updated."
+                      displaydialog "Quit “$x” to continue updating? $([[ -n $appNewVersion ]] && echo "Version $appversion is installed, but version $appNewVersion is available.") (You can also run this from Self Service at any time).\n\nIf no action is taken the app will be closed automatically." "$x needs to be updated."
                       button=$?
                       if [[ $button = 2 ]]; then
                         appClosed=0
                         cleanupAndExit 10 "user aborted update" ERROR
-                      elif [[ $button = 4 ]]; then
-                        appClosed=0
-                        cleanupAndExit 25 "timed out waiting for user response" ERROR
                       else
                         if [[ $BLOCKING_PROCESS_ACTION = "prompt_user_then_kill" ]]; then
                           # try to quit, then set to kill
